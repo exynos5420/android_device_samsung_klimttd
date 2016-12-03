@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-LOCAL_PATH := device/samsung/klimtlte
+LOCAL_PATH := device/samsung/klimttd
 
 PRODUCT_CHARACTERISTICS := tablet
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
@@ -79,7 +79,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.carrier=unknown
 
 # call the proprietary setup
-$(call inherit-product, vendor/samsung/klimtlte/klimtlte-vendor.mk)
+$(call inherit-product, vendor/samsung/klimttd/klimttd-vendor.mk)
 
 # Import the common tree changes
 include device/samsung/exynos5420-common/exynos5420.mk

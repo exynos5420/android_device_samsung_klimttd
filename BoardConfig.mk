@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-LOCAL_PATH := device/samsung/klimtlte
+LOCAL_PATH := device/samsung/klimttd
 
 # Platform
 BOARD_VENDOR := samsung
@@ -32,10 +32,10 @@ BOARD_RIL_CLASS := ../../../$(LOCAL_PATH)/ril
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(LOCAL_PATH)/bluetooth
 
 # Bootloader
-TARGET_OTA_ASSERT_DEVICE := klimtlte
+TARGET_OTA_ASSERT_DEVICE := klimttd,klimtlte
 
 # Kernel
-TARGET_KERNEL_CONFIG := cyanogenmod_deathly_klimtlte_defconfig
+TARGET_KERNEL_CONFIG := cyanogenmod_deathly_klimttd_defconfig
 
 # Include path
 TARGET_SPECIFIC_HEADER_PATH := $(LOCAL_PATH)/include
