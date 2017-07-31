@@ -1,5 +1,5 @@
 #
-# system.prop for klimtlte
+# system.prop for klimttd
 #
 
 # UI
@@ -8,14 +8,14 @@ ro.sf.lcd_density=320
 # Radio
 rild.libpath=/system/lib/libsec-ril.so
 rild.libargs=-d /dev/ttyS0
-ro.telephony.default_network=9
-ro.telephony.ril_class=SamsungExynosRIL
-ro.ril.telephony.mqanelements=6
-ro.ril.samsung_nextgen_modem=1
-ro.ril.needs_videocall_field=0
+
 
 # Randomly from stock
-ro.ril.gprsclass=10
-ro.ril.hsxpa=1
-ro.sec.fle.encryption=true
 ro.secwvk=220
+persist.gps.qc_nlp_in_use=1
+persist.loc.nlp_name=com.qualcomm.location
+ro.use_data_netmgrd=false
+persist.radio.sib16_support=0
+telephony.lteOnCdmaDevice=0
+persist.radio.tdscdma_present=1
+ro.telephony.default_network=9

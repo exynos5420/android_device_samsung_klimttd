@@ -14,30 +14,31 @@
 # limitations under the License.
 #
 
-LOCAL_PATH := device/samsung/klimtlte
+LOCAL_PATH := device/samsung/klimttd
 
 # Platform
 BOARD_VENDOR := samsung
 TARGET_SOC := exynos5420
 
-# Audio
-TARGET_AUDIOHAL_VARIANT := samsung
-
 # RIL
 BOARD_PROVIDES_LIBRIL := true
+
 # hardware/samsung/ril
-BOARD_MODEM_TYPE := xmm7260
-# RIL.java overwrite
-BOARD_RIL_CLASS := ../../../$(LOCAL_PATH)/ril
+BOARD_MODEM_TYPE := mdm9x25
+BOARD_RIL_CLASS := ../../../device/samsung/klimttd/ril
+TARGET_GLOBAL_CFLAGS += -DDISABLE_ASHMEM_TRACKING
+
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.telephony.ril_class=smdk4x12QComRIL
 
 # Bluetooth
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(LOCAL_PATH)/bluetooth
 
 # Bootloader
-TARGET_OTA_ASSERT_DEVICE := klimtlte
+TARGET_OTA_ASSERT_DEVICE := klimtlte,klimttd
 
 # Kernel
-TARGET_KERNEL_CONFIG := lineageos_deathly_klimtlte_defconfig
+TARGET_KERNEL_CONFIG := lineageos_deathly_klimttd_defconfig
 
 # Include path
 TARGET_SPECIFIC_HEADER_PATH := $(LOCAL_PATH)/include
@@ -48,15 +49,15 @@ BOARD_HARDWARE_CLASS := $(LOCAL_PATH)/cmhw
 # Partitions
 BOARD_BOOTIMAGE_PARTITION_SIZE := 8388608
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 10485760
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 2506096640
-BOARD_USERDATAIMAGE_PARTITION_SIZE := 12629049344
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 2202009600
+BOARD_USERDATAIMAGE_PARTITION_SIZE := 12889096192
 BOARD_CACHEIMAGE_PARTITION_SIZE := 209715200
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_FLASH_BLOCK_SIZE := 4096
 
 # SELinux
 BOARD_SEPOLICY_DIRS += device/samsung/exynos5420-common/sepolicy
-BOARD_SEPOLICY_DIRS += device/samsung/klimtlte/sepolicy
+BOARD_SEPOLICY_DIRS += device/samsung/klimttd/sepolicy
 
 # Cyanogen Hardware
 BOARD_HARDWARE_CLASS := $(COMMON_PATH)/cmhw
