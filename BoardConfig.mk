@@ -17,16 +17,16 @@
 # Inherit from klimt-common
 include device/samsung/klimt-common/BoardConfigCommon.mk
 
-LOCAL_PATH := device/samsung/klimtlte
+LOCAL_PATH := device/samsung/klimttd
 
 # Include path
 TARGET_SPECIFIC_HEADER_PATH += $(LOCAL_PATH)/include
 
 # Assert
-TARGET_OTA_ASSERT_DEVICE := klimtlte
+TARGET_OTA_ASSERT_DEVICE := klimttd
 
 # Kernel
-TARGET_KERNEL_CONFIG := lineageos_klimtlte_defconfig
+TARGET_KERNEL_CONFIG := lineageos_klimttd_defconfig
 
 # HIDL
 DEVICE_MANIFEST_FILE += $(LOCAL_PATH)/manifest.xml
@@ -56,4 +56,4 @@ TARGET_LD_SHIM_LIBS += \
     /vendor/bin/gpsd|/vendor/lib/libshim_gps.so
 
 # Inherit from the proprietary version
--include vendor/samsung/klimtlte/BoardConfigVendor.mk
+-include vendor/samsung/klimttd/BoardConfigVendor.mk

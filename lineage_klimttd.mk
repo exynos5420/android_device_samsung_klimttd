@@ -18,23 +18,23 @@
 # Inherit from those products. Most specific first.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 
-# Inherit from klimtlte device
-$(call inherit-product, device/samsung/klimtlte/device.mk)
+# Inherit from klimttd device
+$(call inherit-product, device/samsung/klimttd/device.mk)
 
 # Inherit some common LineageOS stuff.
 $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
 
 # Device identifier. This must come after all inclusions
-PRODUCT_DEVICE := klimtlte
-PRODUCT_NAME := lineage_klimtlte
+PRODUCT_DEVICE := klimttd
+PRODUCT_NAME := lineage_klimttd
 PRODUCT_BRAND := samsung
-PRODUCT_MODEL := SM-T705
+PRODUCT_MODEL := SM-T705C
 PRODUCT_MANUFACTURER := samsung
 
 PRODUCT_GMS_CLIENTID_BASE := android-samsung
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
-    PRODUCT_NAME=klimtltexx \
-    PRIVATE_BUILD_DESC="klimtltexx-user 6.0.1 MMB29K T705XXU1CQB1 release-keys"
+    PRODUCT_NAME=klimttdxx \
+    PRIVATE_BUILD_DESC="klimttdxx-user 6.0.1 MMB29K T705XXU1CQB1 release-keys"
 
-BUILD_FINGERPRINT := samsung/klimtltexx/klimtlte:6.0.1/MMB29K/T705XXU1CQB1:user/release-keys
+BUILD_FINGERPRINT := samsung/klimttdxx/klimttd:6.0.1/MMB29K/T705XXU1CQB1:user/release-keys

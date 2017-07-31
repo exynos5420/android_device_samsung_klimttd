@@ -18,7 +18,7 @@
 set -e
 
 VENDOR=samsung
-DEVICE=klimtlte
+DEVICE=klimttd
 
 export INITIAL_COPYRIGHT_YEAR=2017
 
@@ -39,7 +39,7 @@ source "${HELPER}"
 setup_vendor "${DEVICE}" "${VENDOR}" "${LINEAGE_ROOT}"
 
 # Copyright headers and guards
-write_headers "klimtlte"
+write_headers "klimttd"
 
 # The standard blobs
 write_makefiles "${MY_DIR}/proprietary-files.txt" true

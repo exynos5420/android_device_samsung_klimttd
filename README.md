@@ -1,6 +1,7 @@
+
 Copyright 2020 - The LineageOS Project
 
-Device configuration for Samsung Galaxy Tab S 8.4 (SM-T705).
+Device configuration for Samsung Galaxy Tab S 8.4 (SM-T705C).
 ========================================
 
 Basic   | Specification List

@@ -14,12 +14,12 @@
 # limitations under the License.
 #
 
-LOCAL_PATH := device/samsung/klimtlte
+LOCAL_PATH := device/samsung/klimttd
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/lineage_klimtlte.mk
+    $(LOCAL_DIR)/lineage_klimttd.mk
 
 COMMON_LUNCH_CHOICES := \
-    lineage_klimtlte-user \
-    lineage_klimtlte-userdebug \
-    lineage_klimtlte-eng
+    lineage_klimttd-user \
+    lineage_klimttd-userdebug \
+    lineage_klimttd-eng

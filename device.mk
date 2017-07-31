@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-LOCAL_PATH := device/samsung/klimtlte
+LOCAL_PATH := device/samsung/klimttd
 
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
 
@@ -59,4 +59,4 @@ PRODUCT_PROPERTY_OVERRIDES += \
 $(call inherit-product, device/samsung/klimt-common/device-common.mk)
 
 # call the proprietary setup
-$(call inherit-product-if-exists, vendor/samsung/klimtlte/klimtlte-vendor.mk)
+$(call inherit-product-if-exists, vendor/samsung/klimttd/klimttd-vendor.mk)
