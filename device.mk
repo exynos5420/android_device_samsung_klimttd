@@ -46,8 +46,18 @@ PRODUCT_COPY_FILES += \
 
 # GPS
 PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/gps/flp.conf:system/etc/flp.conf \
     $(LOCAL_PATH)/configs/gps/gps.conf:system/etc/gps.conf \
-    $(LOCAL_PATH)/configs/gps/gps.xml:system/etc/gps.xml
+    $(LOCAL_PATH)/configs/gps/sap.conf:system/etc/sap.conf
+
+# GPS Libs (Not used currently)
+#PRODUCT_PACKAGES += \
+#    gps.default \
+#    libgps.utils \
+#    libloc_core \
+#    libloc_eng
+
+#TARGET_NO_RPC := true
 
 # Shim
 PRODUCT_PACKAGES += \

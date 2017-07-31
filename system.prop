@@ -15,6 +15,10 @@ telephony.lteOnCdmaDevice=0
 persist.radio.sib16_support=0
 ro.use_data_netmgrd=false
 
+# GPS
+persist.gps.qc_nlp_in_use=1
+persist.loc.nlp_name=com.qualcomm.location
+
 # Randomly from stock
 ro.ril.gprsclass=10
 ro.ril.hsxpa=1
