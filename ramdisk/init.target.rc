@@ -1,10 +1,51 @@
-import init.baseband.rc
-
 on init
-    export LD_SHIM_LIBS "/system/bin/gpsd|libshim.so"
+    symlink /data/tombstones /tombstones
+    symlink /dev/block/mmcblk0p13 /dev/mbin0
+    mkdir /firmware 0771 system system
+    restorecon /dev/mbin0
+    symlink /dev/block/mmcblk0p8 /dev/block/param
+    symlink /system/bin/ks_9x15 /ks_9x15
+    symlink /system/bin/efsks /efsks
+
+on post-fs-data
+    symlink /data/user_de/0/com.android.providers.telephony/databases /data/data/com.android.providers.telephony/databases
+    symlink /data/user_de/0/com.android.providers.telephony/shared_prefs /data/data/com.android.providers.telephony/shared_prefs
+
+# MDM requirement
+    mkdir /data/cp_log
+    chmod 0775 /data/cp_log
+    chown system radio /data/cp_log
+
+    mkdir /dev/block/modem
+    symlink /dev/block/platform/dw_mmc.0/by-name/m9kefs1 /dev/block/modem/m9kefs1
+    symlink /dev/block/platform/dw_mmc.0/by-name/m9kefs2 /dev/block/modem/m9kefs2
+    symlink /dev/block/platform/dw_mmc.0/by-name/m9kefs3 /dev/block/modem/m9kefs3
+    symlink /dev/block/platform/dw_mmc.0/by-name/ /dev/block/modem/dump_path
+    chown system radio /dev/block/modem/m9kefs1
+    chmod 0775 /dev/block/modem/m9kefs1
+    chown system radio /dev/block/modem/m9kefs2
+    chmod 0775 /dev/block/modem/m9kefs2
+    chown system radio /dev/block/modem/m9kefs3
+    chmod 0775 /dev/block/modem/m9kefs3
+    chown system radio /dev/block/modem/dump_path
+    chmod 0775 /dev/block/modem/dump_path
+	
+    mount vfat /dev/block/mmcblk0p13 /firmware ro shortname=lower fmask=0133,dmask=0022
+    chown system system /tombstones
+    chmod 0775 /tombstones
+    mkdir /tombstones/modem 0775 system system
+    mkdir /tombstones/lpass 0775 system system
+    mkdir /tombstones/wcnss 0775 system system
+    mkdir /tombstones/dsps 0775 system system
+    rmdir /tombstones/qcks
+    mkdir /tombstones/qcks 771 system system
+    rmdir /tombstones/efs
+    mkdir /tombstones/efs 771 system system
+
+    chown system radio /dev/block/platform/dw_mmc.0/by-name
+    chmod 0775 /dev/block/platform/dw_mmc.0/by-name
 
 on boot
-
 # Fingerprint
     mkdir /dev/validity 0770 system system
     mkdir /data/validity 0770 system system
@@ -71,13 +112,107 @@ on boot
     chown system radio /sys/class/sensors/grip_sensor/threshold
     chown system radio /sys/class/sensors/grip_sensor/onoff
 
+# qmuxd
+    mkdir /dev/socket/qmux_radio 2777 radio radio
+    mkdir /dev/socket/qmux_audio 2777 media audio
+    mkdir /dev/socket/qmux_gps 2777 gps gps
+    mkdir /dev/socket/qmux_bluetooth 2777 media bluetooth
+
+    chmod 0666 /dev/socket/qmux_bluetooth/qmux_connect_socket
+    chown media bluetooth /dev/socket/qmux_bluetooth/qmux_connect_socket
+
+    chmod 0666 /dev/socket/qmux_gps/qmux_connect_socket
+    chown gps gps /dev/socket/qmux_gps/qmux_connect_socket
+
+    chmod 0666 /dev/socket/qmux_audio/qmux_connect_socket
+    chown media audio /dev/socket/qmux_audio/qmux_connect_socket
+
+    chmod 0666 /dev/socket/qmux_radio/qmux_connect_socket
+    chown radio radio /dev/socket/qmux_radio/qmux_connect_socket
+
+    chmod 0666 /dev/socket/qmux_radio/proxy_qmux_connect_socket
+    chown radio radio /dev/socket/qmux_radio/proxy_qmux_connect_socket
+
+    chmod 0666 /dev/socket/qmux_radio/proxy_tether_connect_socket
+    chown radio radio /dev/socket/qmux_radio/proxy_tether_connect_socket
+
+# Allow qmuxd to assign port open wait time
+    chown radio radio /sys/devices/virtual/hsicctl/hsicctl0/modem_wait
+    chmod 666 /sys/devices/virtual/hsicctl/hsicctl0/modem_wait
+
+# To prevent out of order acknowledgements from making
+# connection tracking to treat them as not belonging to
+# the connection they belong to.
+# Otherwise, a weird issue happens in which some long
+# connections on high-throughput links get dropped when
+# an ack packet comes out of order
+    write /proc/sys/net/netfilter/nf_conntrack_tcp_be_liberal 1
+   
+# Restorecon
+    restorecon_recursive /tombstones
+    restorecon /tombstones/qcks/temp.dump
+    restorecon /data/.cid.info
+    restorecon /data/ISP_CV
+    restorecon_recursive /efs/wifi
+
+# Waketime fot fast dormancy
+    chown system radio /sys/devices/platform/mdm_hsic_pm0/waketime
+    chmod 0660 /sys/devices/platform/mdm_hsic_pm0/waketime
+
+# Create directories for gpsone_daemon services
+    mkdir /data/misc/gpsone_d 0770 system gps
+
+# Create directories for QuIPS
+    mkdir /data/misc/quipc 0770 system gps
+
+# Create directories for Location services
+    mkdir /data/misc/location 0770 gps gps
+    mkdir /data/misc/location/mq 0770 gps gps
+    mkdir /data/misc/location/xtwifi 0770 gps gps
+
+# fingerprintd
 service fingerprintd /system/bin/fingerprintd
     class late_start
     user system
     group input
 
-# SENSOR FRAMEWORK : starts fingerprintService
+# fingerprintService
 service vcsFPService /system/bin/vcsFPService
     class late_start
     user system
     group system
+
+service ril-daemon /system/bin/rild
+    class main
+    socket rild stream 660 root radio
+    socket rild-debug stream 660 radio system
+    user root
+    group radio cache inet misc audio sdcard_rw qcom_oncrpc diag log sdcard_r
+
+# diag app for cp uart
+service diag_uart_log /system/bin/diag_uart_log
+    class main
+    user root
+    group radio
+
+service diag_mdlog_start /system/bin/diag_mdlog
+    class late_start
+    user sdcard_rw
+    group system qcom_diag sdcard_rw sdcard_r media_rw
+    disabled
+    oneshotservice diag_mdlog_stop /system/bin/diag_mdlog -k
+    class late_start
+    user sdcard_rw
+    group system qcom_diag sdcard_rw sdcard_r media_rw
+    disabled
+    oneshot
+
+service qmuxd /system/bin/qmuxd
+    class main
+    user root
+    group radio log audio bluetooth gps log
+
+service qc_kickstart /system/bin/qcks s
+    class core
+    user root
+    group radio cache inet misc audio sdcard_rw log system

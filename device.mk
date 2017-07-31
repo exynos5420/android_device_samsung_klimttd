@@ -68,17 +68,15 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     fstab.universal5420 \
     init.target.rc \
-    init.baseband.rc \
     ueventd.universal5420.rc
 
 # Radio
 PRODUCT_PACKAGES += \
-    libril \
-    librilutils \
-    rild \
+#    libril \
+#    librilutils \
+#    rild \
     libxml2 \
-    libprotobuf-cpp-full \
-    modemloader
+    libprotobuf-cpp-full
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.carrier=unknown

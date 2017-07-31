@@ -86,6 +86,7 @@ extern "C" {
 #define MAX_QEMU_PIPE_NAME_LENGTH  11
 #define MAX_UUID_LENGTH 64
 
+
 typedef void * RIL_Token;
 
 typedef enum {
@@ -127,7 +128,7 @@ typedef enum {
     RIL_E_ILLEGAL_SIM_OR_ME = 15,               /* network selection failed due to
                                                    illegal SIM or ME */
     RIL_E_MISSING_RESOURCE = 16,                /* no logical channel available */
-    RIL_E_NO_SUCH_ELEMENT = 17,                 /* application not found on SIM */
+    RIL_E_NO_SUCH_ELEMENT = 17,                  /* application not found on SIM */
     RIL_E_DIAL_MODIFIED_TO_USSD = 18,           /* DIAL request modified to USSD */
     RIL_E_DIAL_MODIFIED_TO_SS = 19,             /* DIAL request modified to SS */
     RIL_E_DIAL_MODIFIED_TO_DIAL = 20,           /* DIAL request modified to DIAL with different
@@ -402,8 +403,6 @@ typedef struct {
     char            als;        /* ALS line indicator if available
                                    (0 = line 1) */
     char            isVoice;    /* nonzero if this is is a voice call */
-    char            isVideo;    /* Samsung xmm7260 */
-
     char            isVoicePrivacy;     /* nonzero if CDMA voice privacy mode is active */
     char *          number;     /* Remote party number */
     int             numberPresentation; /* 0=Allowed, 1=Restricted, 2=Not Specified/Unknown 3=Payphone */
@@ -428,7 +427,6 @@ typedef struct {
  */
 typedef struct {
     int             status;     /* A RIL_DataCallFailCause, 0 which is PDP_FAIL_NONE if no error */
-#ifndef HCRADIO
     int             suggestedRetryTime; /* If status != 0, this fields indicates the suggested retry
                                            back-off timer value RIL wants to override the one
                                            pre-configured in FW.
@@ -436,7 +434,6 @@ typedef struct {
                                            The value < 0 means no value is suggested.
                                            The value 0 means retry should be done ASAP.
                                            The value of INT_MAX(0x7fffffff) means no retry. */
-#endif
     int             cid;        /* Context ID, uniquely identifies this call */
     int             active;     /* 0=inactive, 1=active/physical link down, 2=active/physical link up */
     char *          type;       /* One of the PDP_type values in TS 27.007 section 10.1.1.
@@ -1013,11 +1010,11 @@ typedef struct
   int              pin1_replaced;   /* applicable to USIM, CSIM & ISIM */
   RIL_PinState     pin1;
   RIL_PinState     pin2;
-  int              foo1;            // pin1_num_retries
-  int              foo2;            // puk1_num_retries
-  int              foo3;            // pin2_num_retries
-  int              foo4;            // puk2_num_retries
-  int              foo5;            // perso_unblock_retries
+  int              foo1;            /* Samsung */
+  int              foo2;            /* Samsung */
+  int              foo3;            /* Samsung */
+  int              foo4;            /* Samsung */
+  int              foo5;            /* Samsung */
 } RIL_AppStatus;
 
 /* Deprecated, use RIL_CardStatus_v6 */
@@ -1720,18 +1717,29 @@ typedef struct {
 /* Tx Power Levels */
 #define RIL_NUM_TX_POWER_LEVELS     5
 
+/**
+ * Aggregate modem activity information
+ */
 typedef struct {
 
-  /* period (in ms) when modem is power collapsed */
+  /* total time (in ms) when modem is in a low power or
+   * sleep state
+   */
   uint32_t sleep_mode_time_ms;
 
-  /* period (in ms) when modem is awake and in idle mode*/
+  /* total time (in ms) when modem is awake but neither
+   * the transmitter nor receiver are active/awake */
   uint32_t idle_mode_time_ms;
 
-  /* period (in ms) for which Tx is active */
+  /* total time (in ms) during which the transmitter is active/awake,
+   * subdivided by manufacturer-defined device-specific
+   * contiguous increasing ranges of transmit power between
+   * 0 and the transmitter's maximum transmit power.
+   */
   uint32_t tx_mode_time_ms[RIL_NUM_TX_POWER_LEVELS];
 
-  /* period (in ms) for which Rx is active */
+  /* total time (in ms) for which receiver is active/awake and
+   * the transmitter is inactive */
   uint32_t rx_mode_time_ms;
 } RIL_ActivityStatsInfo;
 
@@ -3098,9 +3106,6 @@ typedef struct {
  * Valid errors:
  *  SUCCESS
  *  RADIO_NOT_AVAILABLE
- *  SS_MODIFIED_TO_DIAL
- *  SS_MODIFIED_TO_USSD
- *  SS_MODIFIED_TO_SS
  *  GENERIC_FAILURE
  *
  */
@@ -4889,6 +4894,7 @@ typedef struct {
  *
  * Selection/de-selection of a subscription from a SIM card
  * "data" is const  RIL_SelectUiccSub*
+
  *
  * "response" is NULL
  *
@@ -5111,11 +5117,11 @@ typedef struct {
 /**
  * RIL_REQUEST_GET_ACTIVITY_INFO
  *
- * Get modem activity statisitics info.
+ * Get modem activity information for power consumption estimation.
  *
- * There can be multiple RIL_REQUEST_GET_ACTIVITY_INFO calls to modem.
- * Once the response for the request is sent modem will clear
- * current statistics information.
+ * Request clear-on-read statistics information that is used for
+ * estimating the per-millisecond power consumption of the cellular
+ * modem.
  *
  * "data" is null
  * "response" is const RIL_ActivityStatsInfo *
@@ -5179,14 +5185,11 @@ typedef struct {
  */
 #define RIL_REQUEST_GET_CARRIER_RESTRICTIONS 137
 
-/**********************************************************
- * SAMSUNG REQUESTS
- **********************************************************/
+/***********************************************************************/
 
-/*
- * You normally find these constants if you decompile RILConstants.class in
- * framework2.odex.
- */
+/* SAMSUNG REQUESTS */
+#undef RIL_REQUEST_SIM_OPEN_CHANNEL
+#undef RIL_REQUEST_SIM_CLOSE_CHANNEL
 
 #define RIL_REQUEST_GET_CELL_BROADCAST_CONFIG 10002
 
@@ -5216,32 +5219,28 @@ typedef struct {
 #define RIL_REQUEST_SIM_CLOSE_CHANNEL 10028
 #define RIL_REQUEST_SIM_TRANSMIT_CHANNEL 10029
 #define RIL_REQUEST_SIM_AUTH 10030
-#define RIL_REQUEST_MODIFY_CALL_INITIATE 10031
-#define RIL_REQUEST_MODIFY_CALL_CONFIRM 10032
-#define RIL_REQUEST_SAFE_MODE 10033
-#define RIL_REQUEST_SET_VOICE_DOMAIN_PREF 10034
-#define RIL_REQUEST_PS_ATTACH 10035
-#define RIL_REQUEST_PS_DETACH 10036
-#define RIL_REQUEST_ACTIVATE_DATA_CALL 10037
-#define RIL_REQUEST_CHANGE_SIM_PERSO 10038
-#define RIL_REQUEST_ENTER_SIM_PERSO 10039
-#define RIL_REQUEST_GET_TIME_INFO 10040
-#define RIL_REQUEST_OMADM_SETUP_SESSION 10042
-#define RIL_REQUEST_OMADM_SERVER_START_SESSION 10043
-#define RIL_REQUEST_OMADM_CLIENT_START_SESSION 10044
-#define RIL_REQUEST_OMADM_SEND_DATA 10045
-#define RIL_REQUEST_CDMA_GET_DATAPROFILE 10046
-#define RIL_REQUEST_CDMA_SET_DATAPROFILE 10047
-#define RIL_REQUEST_CDMA_GET_SYSTEMPROPERTIES 10048
-#define RIL_REQUEST_CDMA_SET_SYSTEMPROPERTIES 10049
-#define RIL_REQUEST_SEND_SMS_COUNT 10050
-#define RIL_REQUEST_SEND_SMS_MSG 10051
-#define RIL_REQUEST_SEND_SMS_MSG_READ_STATUS 10052
-#define RIL_REQUEST_MODEM_HANGUP 10053
-#define RIL_REQUEST_SET_SIM_POWER 10054
-#define RIL_REQUEST_SET_PREFERRED_NETWORK_LIST 10055
-#define RIL_REQUEST_GET_PREFERRED_NETWORK_LIST 10056
-#define RIL_REQUEST_HANGUP_VT 10057
+#define RIL_REQUEST_PS_ATTACH 10031
+#define RIL_REQUEST_PS_DETACH 10032
+#define RIL_REQUEST_ACTIVATE_DATA_CALL 10033
+#define RIL_REQUEST_CHANGE_SIM_PERSO 10034
+#define RIL_REQUEST_ENTER_SIM_PERSO 10035
+#define RIL_REQUEST_GET_TIME_INFO 10036
+#define RIL_REQUEST_OMADM_SETUP_SESSION 10037
+#define RIL_REQUEST_OMADM_SERVER_START_SESSION 10038
+#define RIL_REQUEST_OMADM_CLIENT_START_SESSION 10039
+#define RIL_REQUEST_OMADM_SEND_DATA 10040
+#define RIL_REQUEST_CDMA_GET_DATAPROFILE 10041
+#define RIL_REQUEST_CDMA_SET_DATAPROFILE 10042
+#define RIL_REQUEST_CDMA_GET_SYSTEMPROPERTIES 10043
+#define RIL_REQUEST_CDMA_SET_SYSTEMPROPERTIES 10044
+#define RIL_REQUEST_SEND_SMS_COUNT 10045
+#define RIL_REQUEST_SEND_SMS_MSG 10046
+#define RIL_REQUEST_SEND_SMS_MSG_READ_STATUS 10047
+#define RIL_REQUEST_MODEM_HANGUP 10048
+#define RIL_REQUEST_SET_SIM_POWER 10049
+#define RIL_REQUEST_SET_PREFERRED_NETWORK_LIST 10050
+#define RIL_REQUEST_GET_PREFERRED_NETWORK_LIST 10051
+#define RIL_REQUEST_HANGUP_VT 10052
 
 /***********************************************************************/
 
@@ -5260,7 +5259,6 @@ typedef struct {
 #define RIL_RESPONSE_ACKNOWLEDGEMENT 800
 
 /***********************************************************************/
-
 
 #define RIL_UNSOL_RESPONSE_BASE 1000
 
@@ -5789,6 +5787,7 @@ typedef struct {
  * ((int *)data)[0] is of type const RIL_SrvccState
  *
  */
+
 #define RIL_UNSOL_SRVCC_STATE_NOTIFY 1039
 
 /**
@@ -5872,10 +5871,7 @@ typedef struct {
 
 /***********************************************************************/
 
-/**********************************************************
- * SAMSUNG RESPONSE
- **********************************************************/
-
+/* SAMSUNG RESPONSE */
 #define SAMSUNG_UNSOL_RESPONSE_BASE 11000
 
 #define RIL_UNSOL_RELEASE_COMPLETE_MESSAGE 11001
@@ -5897,22 +5893,18 @@ typedef struct {
 #define RIL_UNSOL_TWO_MIC_STATE 11018
 #define RIL_UNSOL_DHA_STATE 11019
 #define RIL_UNSOL_UART 11020
-#define RIL_UNSOL_SIM_PB_READY 11021
-#define RIL_UNSOL_RESPONSE_HANDOVER 11038
-#define RIL_UNSOL_IPV6_ADDR 11039
-#define RIL_UNSOL_NWK_INIT_DISC_REQUEST 11040
-#define RIL_UNSOL_RTS_INDICATION 11041
-#define RIL_UNSOL_OMADM_SEND_DATA 11046
-#define RIL_UNSOL_DUN 11047
-#define RIL_UNSOL_SYSTEM_REBOOT 11048
-#define RIL_UNSOL_VOICE_PRIVACY_CHANGED 11049
-#define RIL_UNSOL_UTS_GETSMSCOUNT 11050
-#define RIL_UNSOL_UTS_GETSMSMSG 11051
-#define RIL_UNSOL_UTS_GET_UNREAD_SMS_STATUS 11052
-#define RIL_UNSOL_MIP_CONNECT_STATUS 11053
-
-/* SNDMGR */
-#define RIL_UNSOL_SNDMGR_WB_AMR_REPORT 20017
+#define RIL_UNSOL_RESPONSE_HANDOVER 11021
+#define RIL_UNSOL_IPV6_ADDR 11022
+#define RIL_UNSOL_NWK_INIT_DISC_REQUEST 11023
+#define RIL_UNSOL_RTS_INDICATION 11024
+#define RIL_UNSOL_OMADM_SEND_DATA 11025
+#define RIL_UNSOL_DUN 11026
+#define RIL_UNSOL_SYSTEM_REBOOT 11027
+#define RIL_UNSOL_VOICE_PRIVACY_CHANGED 11028
+#define RIL_UNSOL_UTS_GETSMSCOUNT 11029
+#define RIL_UNSOL_UTS_GETSMSMSG 11030
+#define RIL_UNSOL_UTS_GET_UNREAD_SMS_STATUS 11031
+#define RIL_UNSOL_MIP_CONNECT_STATUS 11032
 
 /***********************************************************************/
 

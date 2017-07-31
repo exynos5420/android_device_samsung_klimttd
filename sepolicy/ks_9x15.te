@@ -1,0 +1,5 @@
+type ks_9x15, domain;
+type ks_9x15_exec, exec_type, file_type;
+
+init_daemon_domain(ks_9x15)
+domain_trans(init, rootfs, ks_9x15)
