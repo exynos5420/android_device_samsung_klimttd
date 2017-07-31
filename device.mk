@@ -59,10 +59,6 @@ PRODUCT_COPY_FILES += \
 
 #TARGET_NO_RPC := true
 
-# Shim
-PRODUCT_PACKAGES += \
-    libshim
-
 PRODUCT_PROPERTY_OVERRIDES += \
     keyguard.no_require_sim=true \
     ro.com.android.dataroaming=true
