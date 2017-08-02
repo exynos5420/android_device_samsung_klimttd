@@ -57,7 +57,7 @@ PRODUCT_COPY_FILES += \
 #    libloc_core \
 #    libloc_eng
 
-#TARGET_NO_RPC := true
+TARGET_NO_RPC := true
 
 PRODUCT_PROPERTY_OVERRIDES += \
     keyguard.no_require_sim=true \
