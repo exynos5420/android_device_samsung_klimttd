@@ -182,37 +182,37 @@ service vcsFPService /system/bin/vcsFPService
     user system
     group system
 
-service ril-daemon /system/bin/rild
-    class main
-    socket rild stream 660 root radio
-    socket rild-debug stream 660 radio system
-    user root
-    group radio cache inet misc audio sdcard_rw qcom_oncrpc diag log sdcard_r
+#service ril-daemon /system/bin/rild
+#    class main
+#    socket rild stream 660 root radio
+#    socket rild-debug stream 660 radio system
+#    user root
+#    group radio cache inet misc audio sdcard_rw qcom_oncrpc diag log sdcard_r
 
 # diag app for cp uart
-service diag_uart_log /system/bin/diag_uart_log
-    class main
-    user root
-    group radio
+#service diag_uart_log /system/bin/diag_uart_log
+#    class main
+#    user root
+#    group radio
 
-service diag_mdlog_start /system/bin/diag_mdlog
-    class late_start
-    user sdcard_rw
-    group system qcom_diag sdcard_rw sdcard_r media_rw
-    disabled
-    oneshotservice diag_mdlog_stop /system/bin/diag_mdlog -k
-    class late_start
-    user sdcard_rw
-    group system qcom_diag sdcard_rw sdcard_r media_rw
-    disabled
-    oneshot
+#service diag_mdlog_start /system/bin/diag_mdlog
+#    class late_start
+#    user sdcard_rw
+#    group system qcom_diag sdcard_rw sdcard_r media_rw
+#    disabled
+#    oneshotservice diag_mdlog_stop /system/bin/diag_mdlog -k
+#    class late_start
+#    user sdcard_rw
+#    group system qcom_diag sdcard_rw sdcard_r media_rw
+#    disabled
+#    oneshot
 
-service qmuxd /system/bin/qmuxd
-    class main
-    user root
-    group radio log audio bluetooth gps log
+#service qmuxd /system/bin/qmuxd
+#    class main
+#    user root
+#    group radio log audio bluetooth gps log
 
-service qc_kickstart /system/bin/qcks s
-    class core
-    user root
-    group radio cache inet misc audio sdcard_rw log system
+#service qc_kickstart /system/bin/qcks s
+#    class core
+#    user root
+#    group radio cache inet misc audio sdcard_rw log system
