@@ -82,7 +82,10 @@ PRODUCT_PACKAGES += \
 #    librilutils \
 #    rild \
     libxml2 \
-    libprotobuf-cpp-full
+    libprotobuf-cpp-full \
+    libcrypto_utils \
+    libcrypto
+
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.carrier=unknown
